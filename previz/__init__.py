@@ -208,7 +208,6 @@ def build_three_js_scene(scene):
     scene_root, geometries = build_objects(scene)
 
     return {
-
         'animations': [],
         'geometries': geometries,
         'images': [],

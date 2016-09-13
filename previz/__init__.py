@@ -90,6 +90,13 @@ Mesh = collections.namedtuple('Mesh',
                               'uvsets'])
 
 
+Scene = collections.namedtuple('Scene',
+                               ['generator',
+                                'source_file',
+                                'background_color',
+                                'objects'])
+
+
 class UuidBuilder(object):
     def __init__(self, dns = 'previz.online'):
         self.namespace = uuid.uuid5(uuid.NAMESPACE_DNS, dns)

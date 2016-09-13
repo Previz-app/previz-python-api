@@ -44,3 +44,124 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(b('SomeString'), b('SomeString'))
         self.assertEqual(b('SomeString'), b('SomeString').upper())
         self.assertNotEqual(b(), b())
+
+
+class TestExport(unittest.TestCase):
+    def setUp(self):
+        self.mesh = Mesh('MyMesh',
+                         'MyMeshGeometry',
+                         [[0, 1, 2], [4, 5], [6]],                        # world_matrix, no special meaning
+                         [[7, [8, 9, 10], [[11, 12, 13], [14, 15, 16]]]], # faces,        no special meaning
+                         [[17, 18], [19, 20]],                            # vertices,     no special meaning
+                          [[21, 22], [23, 24]])                            # uvsets,       no special meaning
+        
+        self.scene = Scene('MyGenerator',
+                           '/path/to/my/source/file.json',
+                           14423100, # SVG crimson #DC143C
+                           [self.mesh])
+        
+        self.built_metadata = {
+            'version': 4.4,
+            'type': 'Object',
+            'generator': 'MyGenerator',
+            'sourceFile': '/path/to/my/source/file.json'
+        }
+        
+        self.built_geometry = {
+            'data': {
+                'metadata': {
+                    'version': 3,
+                    'generator': 'MyGenerator',
+                },
+                'name': 'MyMeshGeometry',
+                'faces': [7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                'uvs': [[21, 22], [23, 24]],
+                'vertices': [17, 18, 19, 20]
+            },
+            'uuid': '43A33449-0B05-4A9F-B05A-8B880646F6B4',
+            'type': 'Geometry'
+        }
+        
+        self.built_object = {
+            'name': 'MyMesh',
+            'uuid': '748A9554-7CC1-4F4E-BF23-D70D3E5DFF44',
+            'matrix': [0, 1, 2, 4, 5, 6],
+            'visible': True,
+            'type': 'Mesh',
+            'geometry': self.built_geometry['uuid']
+        }
+        
+        self.built_scene_root = {
+            'type': 'Scene',
+            'matrix': [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            'uuid': '01C4BFA0-2524-4EC8-943C-9F2E5C37925B',
+            'children': [self.built_object],
+            'background': 14423100
+        }
+        
+        self.built_scene = {
+            'animations': [],
+            'geometries': [self.built_geometry],
+            'images': [],
+            'materials': [],
+            'metadata': self.built_metadata,
+            'object': self.built_scene_root,
+            'textures': []
+        }
+        
+    def reset_uuid(self, d, new_uuid):
+        uuid.UUID(d['uuid']) # Test if uuid is valid
+        d['uuid'] = new_uuid
+    
+    def test_build_metadata(self):
+        self.assertEqual(build_metadata(self.scene), self.built_metadata)
+    
+    def test_build_scene_root(self):        
+        root = build_scene_root(self.scene, [self.built_object])
+        self.reset_uuid(root, self.built_scene_root['uuid'])
+        self.assertEqual(root, self.built_scene_root)
+    
+    def test_build_geometry(self):
+        g = build_geometry(self.scene, self.mesh)
+        self.reset_uuid(g, self.built_geometry['uuid'])
+        self.assertEqual(g, self.built_geometry)
+
+    def test_build_object(self):
+        o = build_object(self.mesh, self.built_geometry['uuid'])
+        self.reset_uuid(o, self.built_object['uuid'])
+        self.assertEqual(o, self.built_object)
+    
+    def fix_uuids(self, scene_root, geometries):
+        self.reset_uuid(scene_root, self.built_scene_root['uuid'])
+        self.reset_uuid(scene_root['children'][0], self.built_object['uuid'])
+        scene_root['children'][0]['geometry'] = self.built_geometry['uuid']
+        
+        self.reset_uuid(geometries[0], self.built_geometry['uuid'])
+    
+    def test_build_objects(self):
+        scene_root, geometries = build_objects(self.scene)
+        self.fix_uuids(scene_root, geometries)
+        self.assertEqual(scene_root, self.built_scene_root)
+        self.assertEqual(geometries, [self.built_geometry])
+    
+    def test_build_three_js_scene(self):
+        scene = build_three_js_scene(self.scene)
+        self.fix_uuids(scene['object'], scene['geometries'])
+        self.assertEqual(scene, self.built_scene)

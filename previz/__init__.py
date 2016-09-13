@@ -81,22 +81,6 @@ class PrevizProject(object):
         return {'Authorization': 'Bearer {}'.format(self.token)}
 
 
-Mesh = collections.namedtuple('Mesh',
-                             ['name',
-                              'geometry_name',
-                              'world_matrix',
-                              'faces',
-                              'vertices',
-                              'uvsets'])
-
-
-Scene = collections.namedtuple('Scene',
-                               ['generator',
-                                'source_file',
-                                'background_color',
-                                'objects'])
-
-
 class UuidBuilder(object):
     def __init__(self, dns = 'previz.online'):
         self.namespace = uuid.uuid5(uuid.NAMESPACE_DNS, dns)
@@ -112,6 +96,7 @@ class UuidBuilder(object):
 
 buildUuid = UuidBuilder()
 
+
 def flat_list(iterable):
     def flatten(values):
         try:
@@ -122,6 +107,25 @@ def flat_list(iterable):
             yield values
 
     return list(flatten(iterable))
+
+
+#############################################################################
+
+
+Mesh = collections.namedtuple('Mesh',
+                             ['name',
+                              'geometry_name',
+                              'world_matrix',
+                              'faces',
+                              'vertices',
+                              'uvsets'])
+
+
+Scene = collections.namedtuple('Scene',
+                               ['generator',
+                                'source_file',
+                                'background_color',
+                                'objects'])
 
 
 def build_metadata(scene):

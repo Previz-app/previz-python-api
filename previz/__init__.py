@@ -1,4 +1,7 @@
+import collections
+import json
 import requests
+import uuid
 
 
 class PrevizProject(object):
@@ -76,3 +79,139 @@ class PrevizProject(object):
     @property
     def headers(self):
         return {'Authorization': 'Bearer {}'.format(self.token)}
+
+
+Mesh = collections.namedtuple('Mesh',
+                             ['name',
+                              'geometry_name',
+                              'world_matrix',
+                              'faces',
+                              'vertices',
+                              'uvsets'])
+
+
+class UuidBuilder(object):
+    def __init__(self, dns = 'previz.online'):
+        self.namespace = uuid.uuid5(uuid.NAMESPACE_DNS, dns)
+
+    def __call__(self, name = None):
+        return str(self.uuid(name)).upper()
+
+    def uuid(self, name):
+        if name is None:
+            return uuid.uuid4()
+        return uuid.uuid5(self.namespace, name)
+
+
+buildUuid = UuidBuilder()
+
+def flat_list(iterable):
+    def flatten(values):
+        try:
+            for value in values:
+                for iterated in flatten(value):
+                    yield iterated
+        except TypeError:
+            yield values
+
+    return list(flatten(iterable))
+
+
+def build_metadata(scene):
+    return {
+        'version': 4.4,
+        'type': 'Object',
+        'generator': scene.generator,
+        'sourceFile': scene.source_file
+    }
+
+
+def build_scene_root(scene, children):
+    return {
+        'type': 'Scene',
+        'matrix': [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        'uuid': buildUuid(),
+        'children': children,
+        'background': scene.background_color
+    }
+
+
+def build_geometry(scene, mesh):
+    return {
+        'data': {
+            'metadata': {
+                'version': 3,
+                'generator': scene.generator,
+            },
+            'name': mesh.geometry_name,
+            'faces': flat_list(mesh.faces),
+            'uvs': [flat_list(uvset) for uvset in mesh.uvsets],
+            'vertices': flat_list(mesh.vertices)
+        },
+        'uuid': buildUuid(),
+        'type': 'Geometry'
+    }
+
+
+def build_object(mesh, geometry_uuid):
+    return {
+        'name': mesh.name,
+        'uuid': buildUuid(),
+        'matrix': flat_list(mesh.world_matrix),
+        'visible': True,
+        'type': 'Mesh',
+        'geometry': geometry_uuid
+    }
+
+
+def build_objects(scene):
+    objects = []
+    geometries = []
+    
+    for mesh in scene.objects:
+        geometry = build_geometry(scene, mesh)
+        object = build_object(mesh, geometry['uuid'])
+        
+        objects.append(object)
+        geometries.append(geometry)
+
+    return build_scene_root(scene, objects), geometries
+
+
+def build_three_js_scene(scene):
+    ret = {}
+
+    scene_root, geometries = build_objects(scene)
+
+    return {
+
+        'animations': [],
+        'geometries': geometries,
+        'images': [],
+        'materials': [],
+        'metadata': build_metadata(scene),
+        'object': scene_root,
+        'textures': []
+    }
+
+
+def export(scene, fp):
+    scene = build_three_js_scene(scene)
+    json.dump(scene, fp, indent=1, sort_keys=True)

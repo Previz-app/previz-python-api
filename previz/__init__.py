@@ -75,10 +75,10 @@ class PrevizProject(object):
             'root': self.root,
             'project_id': self.project_id,
         }
-    
+
     @property
     def headers(self):
-        return {'Authorization': 'Bearer {}'.format(self.token)}
+        return {'Authorization': 'Bearer {0}'.format(self.token)}
 
 
 class UuidBuilder(object):
@@ -195,11 +195,11 @@ def build_object(mesh, geometry_uuid):
 def build_objects(scene):
     objects = []
     geometries = []
-    
+
     for mesh in scene.objects:
         geometry = build_geometry(scene, mesh)
         object = build_object(mesh, geometry['uuid'])
-        
+
         objects.append(object)
         geometries.append(geometry)
 

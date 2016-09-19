@@ -1,3 +1,8 @@
+try:
+    from StringIO import StringIO # python 2
+except ImportError:
+    from io import StringIO # python 3
+import json
 import unittest
 
 from previz import *
@@ -185,3 +190,13 @@ class TestExport(unittest.TestCase):
         scene = build_three_js_scene(self.scene)
         self.fix_uuids(scene['object'], scene['geometries'])
         self.assertEqual(scene, self.built_scene)
+
+    def test_export(self):
+        fp = StringIO()
+        export(self.scene, fp)
+        scene_from_json = json.loads(fp.getvalue())
+        self.fix_uuids(scene_from_json['object'],
+                       scene_from_json['geometries'])
+        self.assertEqual(scene_from_json, self.built_scene)
+        
+        

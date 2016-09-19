@@ -7,6 +7,26 @@ class TestPrevizProject(unittest.TestCase):
         self.p = PrevizProject('https://example.com/api',
                                'aaa',
                                1)
+    
+    def test_url(self):
+        self.assertEqual(self.p.url('project',
+                                    root='http://previz.app/api',
+                                    project_id=2),
+                         'http://previz.app/api/projects/2')
+        
+        self.assertEqual(self.p.url('projects'),
+                         'https://example.com/api/projects')
+        self.assertEqual(self.p.url('project'),
+                         'https://example.com/api/projects/1')
+        self.assertEqual(self.p.url('scene'),
+                         'https://example.com/api/projects/1/scene')
+        self.assertEqual(self.p.url('assets'),
+                         'https://example.com/api/projects/1/assets')
+        self.assertEqual(self.p.url('asset',
+                                    asset_id=3),
+                         'https://example.com/api/projects/1/assets/3')
+        self.assertEqual(self.p.url('state'),
+                         'https://example.com/api/projects/1/state')
         
     def test_url_elems(self):
         self.assertEqual(self.p.url_elems,

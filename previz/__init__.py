@@ -65,8 +65,9 @@ class PrevizProject(object):
                      self.url('state'),
                      data=data)
 
-    def url(self, mask_name, **url_elems):
-        url_elems.update(self.url_elems)
+    def url(self, mask_name, **url_elems_override):
+        url_elems = self.url_elems.copy()
+        url_elems.update(url_elems_override)
         return self.endpoints_masks[mask_name].format(**url_elems)
 
     @property

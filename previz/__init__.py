@@ -138,7 +138,7 @@ def build_metadata(scene):
 
 
 def build_scene_root(scene, children):
-    return {
+    ret = {
         'type': 'Scene',
         'matrix': [
             1.0,
@@ -159,9 +159,13 @@ def build_scene_root(scene, children):
             1.0
         ],
         'uuid': buildUuid(),
-        'children': children,
-        'background': scene.background_color
+        'children': children
     }
+
+    if scene.background_color is not None:
+        ret['background'] = scene.background_color
+
+    return ret
 
 
 def build_geometry(scene, mesh):

@@ -78,7 +78,7 @@ class TestExport(unittest.TestCase):
                          [[0, 1, 2], [4, 5], [6]],                           # world_matrix, no special meaning
                          [[7, [8, 9, 10], [[11, 12, 13], [14, 15, 16]]]],    # faces,        no special meaning
                          [[17, 18], [19, 20]],                               # vertices,     no special meaning
-                         [UVSet('uvsA', [21, 22]), UVSet('uvsB', [23, 24])]) # uvsets,       no special meaning
+                         [UVSet('uvsA', [21, 22]), UVSet('uvsB', range(23, 25))]) # uvsets,       no special meaning
         
         self.scene = Scene('MyGenerator',
                            '/path/to/my/source/file.json',

@@ -181,7 +181,7 @@ def build_geometry(scene, mesh):
             },
             'name': mesh.geometry_name,
             'faces': flat_list(mesh.faces),
-            'uvs': [uvset.coordinates for uvset in mesh.uvsets],
+            'uvs': [flat_list(uvset.coordinates) for uvset in mesh.uvsets],
             'vertices': flat_list(mesh.vertices)
         },
         'uuid': buildUuid(),

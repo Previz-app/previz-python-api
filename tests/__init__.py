@@ -75,10 +75,10 @@ class TestExport(unittest.TestCase):
     def setUp(self):
         self.mesh = Mesh('MyMesh',
                          'MyMeshGeometry',
-                         [[0, 1, 2], [4, 5], [6]],                        # world_matrix, no special meaning
-                         [[7, [8, 9, 10], [[11, 12, 13], [14, 15, 16]]]], # faces,        no special meaning
-                         [[17, 18], [19, 20]],                            # vertices,     no special meaning
-                          [[21, 22], [23, 24]])                            # uvsets,       no special meaning
+                         [[0, 1, 2], [4, 5], [6]],                           # world_matrix, no special meaning
+                         [[7, [8, 9, 10], [[11, 12, 13], [14, 15, 16]]]],    # faces,        no special meaning
+                         [[17, 18], [19, 20]],                               # vertices,     no special meaning
+                         [UVSet('uvsA', [21, 22]), UVSet('uvsB', [23, 24])]) # uvsets,       no special meaning
         
         self.scene = Scene('MyGenerator',
                            '/path/to/my/source/file.json',
@@ -107,13 +107,20 @@ class TestExport(unittest.TestCase):
             'type': 'Geometry'
         }
         
+        self.built_user_data = {
+            'previz': {
+                'uvsetNames': ['uvsA', 'uvsB']
+            }
+        }
+
         self.built_object = {
             'name': 'MyMesh',
             'uuid': '748A9554-7CC1-4F4E-BF23-D70D3E5DFF44',
             'matrix': [0, 1, 2, 4, 5, 6],
             'visible': True,
             'type': 'Mesh',
-            'geometry': self.built_geometry['uuid']
+            'geometry': self.built_geometry['uuid'],
+            'userData': self.built_user_data
         }
         
         self.built_scene_root = {
@@ -167,6 +174,9 @@ class TestExport(unittest.TestCase):
         g = build_geometry(self.scene, self.mesh)
         self.reset_uuid(g, self.built_geometry['uuid'])
         self.assertEqual(g, self.built_geometry)
+
+    def test_build_user_data(self):
+        self.assertEqual(build_user_data(self.mesh), self.built_user_data)
 
     def test_build_object(self):
         o = build_object(self.mesh, self.built_geometry['uuid'])

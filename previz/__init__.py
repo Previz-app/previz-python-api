@@ -112,6 +112,9 @@ def flat_list(iterable):
 
 #############################################################################
 
+UVSet = collections.namedtuple('UVSet',
+                               ['name',
+                                'coordinates'])
 
 Mesh = collections.namedtuple('Mesh',
                              ['name',
@@ -178,11 +181,18 @@ def build_geometry(scene, mesh):
             },
             'name': mesh.geometry_name,
             'faces': flat_list(mesh.faces),
-            'uvs': [flat_list(uvset) for uvset in mesh.uvsets],
+            'uvs': [uvset.coordinates for uvset in mesh.uvsets],
             'vertices': flat_list(mesh.vertices)
         },
         'uuid': buildUuid(),
         'type': 'Geometry'
+    }
+
+
+def build_user_data(mesh):
+    return {'previz': {
+            'uvsetNames': [uvset.name for uvset in mesh.uvsets]
+        }
     }
 
 
@@ -193,7 +203,8 @@ def build_object(mesh, geometry_uuid):
         'matrix': flat_list(mesh.world_matrix),
         'visible': True,
         'type': 'Mesh',
-        'geometry': geometry_uuid
+        'geometry': geometry_uuid,
+        'userData': build_user_data(mesh)
     }
 
 

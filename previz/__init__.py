@@ -83,7 +83,7 @@ class PrevizProject(object):
 
 
 class UuidBuilder(object):
-    def __init__(self, dns = 'previz.online'):
+    def __init__(self, dns = 'app.previz.co'):
         self.namespace = uuid.uuid5(uuid.NAMESPACE_DNS, dns)
 
     def __call__(self, name = None):

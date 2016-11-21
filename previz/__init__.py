@@ -29,41 +29,52 @@ class PrevizProject(object):
         r = self.request('POST',
                          self.url('scene'),
                          files={'file': fp})
+        r.raise_for_status()
         return r.json()
 
     def projects(self):
         r = self.request('GET',
                          self.url('projects'))
+        r.raise_for_status()
         return r.json()
 
     def new_project(self, project_name):
         data = {'title': project_name}
-        return self.request('POST',
-                            self.url('projects'),
-                            data=data).json()
+        r = self.request('POST',
+                         self.url('projects'),
+                         data=data)
+        r.raise_for_status()
+        return r.json()
 
     def delete_project(self):
-        self.request('DELETE',
-                     self.url('project'))
+        r = self.request('DELETE',
+                         self.url('project'))
+        r.raise_for_status()
 
     def assets(self):
-        return self.request('GET',
-                            self.url('assets')).json()
+        r = self.request('GET',
+                         self.url('assets'))
+        r.raise_for_status()
+        return r.json()
 
     def delete_asset(self, asset_id):
-        self.request('DELETE',
-                     self.url('asset', asset_id=asset_id))
+        r = self.request('DELETE',
+                         self.url('asset', asset_id=asset_id))
+        r.raise_for_status()
 
     def upload_asset(self, fp):
-        return self.request('POST',
-                            self.url('assets'),
-                            files={'file': fp}).json()
+        r = self.request('POST',
+                         self.url('assets'),
+                         files={'file': fp})
+        r.raise_for_status()
+        return r.json()
 
     def set_state(self, state):
         data = {'state': state}
-        self.request('PUT',
-                     self.url('state'),
-                     data=data)
+        r = self.request('PUT',
+                         self.url('state'),
+                         data=data)
+        r.raise_for_status()
 
     def url(self, mask_name, **url_elems_override):
         url_elems = self.url_elems.copy()

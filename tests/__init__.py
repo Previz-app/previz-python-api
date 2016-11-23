@@ -40,8 +40,8 @@ class TestPrevizProject(unittest.TestCase):
                              'project_id': 1
                          })
 
-    def test_headers(self):
-        self.assertEqual(self.p.headers,
+    def test_common_headers(self):
+        self.assertEqual(self.p.common_headers,
                          {
                              'Authorization': 'Bearer aaa'
                          })

@@ -1,7 +1,9 @@
 import collections
 import json
-import requests
 import uuid
+
+import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 
 
 class PrevizProject(object):
@@ -20,15 +22,21 @@ class PrevizProject(object):
         self.project_id = project_id
 
     def request(self, *args, **kwargs):
+        headers = {}
+        headers.update(self.common_headers)
+        headers.update(kwargs.get('headers', {}))
+        kwargs['headers'] = headers
+
         return requests.request(*args,
-                                headers=self.headers,
                                 verify=False, # TODO: how to make it work on Mac / Windows ?
                                 **kwargs)
 
-    def update_scene(self, fp):
+    def update_scene(self, filename, fp, progress_callback = None):
+        data, headers = self.build_multipart_encoder(filename, fp, progress_callback)
         r = self.request('POST',
                          self.url('scene'),
-                         files={'file': fp})
+                         data=data,
+                         headers=headers)
         r.raise_for_status()
         return r.json()
 
@@ -62,10 +70,12 @@ class PrevizProject(object):
                          self.url('asset', asset_id=asset_id))
         r.raise_for_status()
 
-    def upload_asset(self, fp):
+    def upload_asset(self, filename, fp, progress_callback = None):
+        data, headers = self.build_multipart_encoder(filename, fp, progress_callback)
         r = self.request('POST',
                          self.url('assets'),
-                         files={'file': fp})
+                         data=data,
+                         headers=headers)
         r.raise_for_status()
         return r.json()
 
@@ -81,6 +91,14 @@ class PrevizProject(object):
         url_elems.update(url_elems_override)
         return self.endpoints_masks[mask_name].format(**url_elems)
 
+    def build_multipart_encoder(self, filename, fp, progress_callback):
+        data = MultipartEncoder(
+            fields = {'file': (filename, fp, None)}
+        )
+        data = MultipartEncoderMonitor(data, progress_callback)
+        headers = {'Content-Type': data.content_type}
+        return data, headers
+
     @property
     def url_elems(self):
         return {
@@ -89,7 +107,7 @@ class PrevizProject(object):
         }
 
     @property
-    def headers(self):
+    def common_headers(self):
         return {'Authorization': 'Bearer {0}'.format(self.token)}
 
 

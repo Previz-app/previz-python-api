@@ -8,6 +8,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncod
 
 class PrevizProject(object):
     endpoints_masks = {
+        'team':     '{root}/teams/current',
         'projects': '{root}/projects',
         'project':  '{root}/projects/{project_id:d}',
         'scene':    '{root}/projects/{project_id:d}/scene',
@@ -37,6 +38,12 @@ class PrevizProject(object):
                          self.url('scene'),
                          data=data,
                          headers=headers)
+        r.raise_for_status()
+        return r.json()
+
+    def team(self):
+        r = self.request('GET',
+                         self.url('team'))
         r.raise_for_status()
         return r.json()
 

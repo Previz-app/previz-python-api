@@ -132,15 +132,17 @@ class PrevizProject(object):
 
     def get_all(self):
         # Just one team until the team API becomes fully REST
-        team = self.team()
+        teams = self.teams()
 
-        team['projects'] = []
-        with self.restore_project_id():
-            for project in self.projects():
-                self.project_id = project['id']
-                team['projects'].append(self.project())
+        for team in teams:
+            team['projects'] = []
+            if team['active_team']:
+                with self.restore_project_id():
+                    for project in self.projects():
+                        self.project_id = project['id']
+                        team['projects'].append(self.project())
 
-        return [team]
+        return teams
 
     def switch_team(self, team_id):
         r = self.request('POST',

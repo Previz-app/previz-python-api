@@ -1,4 +1,5 @@
 import collections
+from contextlib import contextmanager
 import json
 import uuid
 
@@ -8,13 +9,15 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncod
 
 class PrevizProject(object):
     endpoints_masks = {
-        'team':     '{root}/teams/current',
-        'projects': '{root}/projects',
-        'project':  '{root}/projects/{project_id:d}',
-        'scene':    '{root}/projects/{project_id:d}/scene',
-        'assets':   '{root}/projects/{project_id:d}/assets',
-        'asset':    '{root}/projects/{project_id:d}/assets/{asset_id:d}',
-        'state':    '{root}/projects/{project_id:d}/state',
+        'team':        '{root}/teams/current',
+        'switch_team': '{root}/teams/{team_id}/switch',
+        'projects':    '{root}/projects',
+        'project':     '{root}/projects/{project_id:d}',
+        'scenes' :     '{root}/projects/{project_id:d}/scenes',
+        'scene':       '{root}/projects/{project_id:d}/scene',
+        'assets':      '{root}/projects/{project_id:d}/assets',
+        'asset':       '{root}/projects/{project_id:d}/assets/{asset_id:d}',
+        'state':       '{root}/projects/{project_id:d}/state'
     }
 
     def __init__(self, root, token, project_id = None):
@@ -58,6 +61,20 @@ class PrevizProject(object):
         r = self.request('POST',
                          self.url('projects'),
                          data=data)
+        r.raise_for_status()
+        return r.json()
+
+    def new_scene(self, scene_name):
+        data = {'name': scene_name}
+        r = self.request('POST',
+                         self.url('scenes'),
+                         data=data)
+        r.raise_for_status()
+        return r.json()
+
+    def project(self):
+        r = self.request('GET',
+                         self.url('project'))
         r.raise_for_status()
         return r.json()
 
@@ -105,6 +122,31 @@ class PrevizProject(object):
         data = MultipartEncoderMonitor(data, progress_callback)
         headers = {'Content-Type': data.content_type}
         return data, headers
+
+    def get_all(self):
+        # Just one team until the team API becomes fully REST
+        team = self.team()
+
+        team['projects'] = []
+        with self.restore_project_id():
+            for project in self.projects():
+                self.project_id = project['id']
+                team['projects'].append(self.project())
+
+        return [team]
+
+    def switch_team(self, team_id):
+        r = self.request('POST',
+                         self.url('switch_team', team_id=team_id))
+        r.raise_for_status()
+        return r.json()
+
+    # HACK changing self.project_id here is a terrible hack
+    @contextmanager
+    def restore_project_id(self):
+        old_project_id = self.project_id
+        yield
+        self.project_id = old_project_id
 
     @property
     def url_elems(self):

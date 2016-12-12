@@ -15,7 +15,7 @@ class PrevizProject(object):
         'projects':    '{root}/projects',
         'project':     '{root}/projects/{project_id:d}',
         'scenes' :     '{root}/projects/{project_id:d}/scenes',
-        'scene':       '{root}/projects/{project_id:d}/scene',
+        'scene':       '{root}/projects/{project_id:d}/scenes/{scene_id:d}',
         'assets':      '{root}/projects/{project_id:d}/assets',
         'asset':       '{root}/projects/{project_id:d}/assets/{asset_id:d}',
         'state':       '{root}/projects/{project_id:d}/state'
@@ -36,10 +36,10 @@ class PrevizProject(object):
                                 verify=False, # TODO: how to make it work on Mac / Windows ?
                                 **kwargs)
 
-    def update_scene(self, filename, fp, progress_callback = None):
+    def update_scene(self, scene_id, filename, fp, progress_callback = None):
         data, headers = self.build_multipart_encoder(filename, fp, progress_callback)
-        r = self.request('POST',
-                         self.url('scene'),
+        r = self.request('PATCH',
+                         self.url('scene', scene_id=scene_id),
                          data=data,
                          headers=headers)
         r.raise_for_status()

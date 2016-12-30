@@ -26,6 +26,13 @@ class PrevizProject(object):
         self.token = token
         self.project_id = project_id
 
+    def method(self, method):
+        data = {}
+        if method in ['PATCH', 'PUT']:
+            data['_method'] = method.lower()
+            method = 'POST'
+        return method, data
+
     def request(self, *args, **kwargs):
         headers = {}
         headers.update(self.common_headers)
@@ -37,8 +44,9 @@ class PrevizProject(object):
                                 **kwargs)
 
     def update_scene(self, scene_id, filename, fp, progress_callback = None):
-        data, headers = self.build_multipart_encoder(filename, fp, progress_callback)
-        r = self.request('PATCH',
+        method, data = self.method('PATCH')
+        data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)
+        r = self.request(method,
                          self.url('scene', scene_id=scene_id),
                          data=data,
                          headers=headers)
@@ -102,8 +110,9 @@ class PrevizProject(object):
         r.raise_for_status()
 
     def upload_asset(self, filename, fp, progress_callback = None):
-        data, headers = self.build_multipart_encoder(filename, fp, progress_callback)
-        r = self.request('POST',
+        method, data = self.method('POST')
+        data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)
+        r = self.request(method,
                          self.url('assets'),
                          data=data,
                          headers=headers)
@@ -122,9 +131,10 @@ class PrevizProject(object):
         url_elems.update(url_elems_override)
         return self.endpoints_masks[mask_name].format(**url_elems)
 
-    def build_multipart_encoder(self, filename, fp, progress_callback):
+    def build_multipart_encoder(self, filename, fp, fields, progress_callback):
+        fields['file'] = (filename, fp, None)
         data = MultipartEncoder(
-            fields = {'file': (filename, fp, None)}
+            fields = fields
         )
         data = MultipartEncoderMonitor(data, progress_callback)
         headers = {'Content-Type': data.content_type}

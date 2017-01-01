@@ -129,8 +129,6 @@ class PrevizProject(object):
     def url(self, mask_name, **url_elems_override):
         url_elems = self.url_elems.copy()
         url_elems.update(url_elems_override)
-        print 80*'-', self.endpoints_masks[mask_name]
-        print 80*'-', url_elems
         return self.endpoints_masks[mask_name].format(**url_elems)
 
     def build_multipart_encoder(self, filename, fp, fields, progress_callback):
@@ -339,5 +337,4 @@ def build_three_js_scene(scene):
 
 def export(scene, fp):
     scene = build_three_js_scene(scene)
-    print 80*'+', scene, fp
     json.dump(scene, fp, indent=1, sort_keys=True)

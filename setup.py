@@ -8,17 +8,17 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.0.7',
     description='Previz API',
-    url='https://dandelion-burdock.beanstalkapp.com',
-    author='Charles Flèche',
-    author_email='charles.fleche@gmail.com',
-    license='Proprietary',
+    url='https://app.previz.co',
+    author='Previz',
+    author_email='info@previz.co',
+    license='MIT',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Multimedia :: Graphics :: 3D Modeling',
-        'License :: Other/Proprietary License',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

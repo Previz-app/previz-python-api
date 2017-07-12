@@ -232,6 +232,13 @@ def walk_data(obj):
 
     return list(iter(obj))
 
+def list2param(name, iterable):
+    ret = {}
+    v = ','.join([str(i) for i in iterable])
+    if len(v) > 0:
+        ret[name] = v
+    return ret
+
 #############################################################################
 
 UVSet = collections.namedtuple('UVSet',

@@ -32,7 +32,7 @@ class TestPrevizProject(unittest.TestCase):
                          'https://example.com/api/projects/1/assets/3')
         self.assertEqual(self.p.url('state'),
                          'https://example.com/api/projects/1/state')
-        
+
     def test_url_elems(self):
         self.assertEqual(self.p.url_elems,
                          {

@@ -75,25 +75,54 @@ class TestUtils(unittest.TestCase):
         d = {
             'data': [
                 {
-                    'data': {'id': 0},
+                    'data': {'id': 0,
+                             'vals': ['a', {'b': 'c'}]},
                     'links': []
                 },
                 {
-                    'data': [
-                        {'data': {'id': 1}},
-                        {'data': {'id': 2}}
-                    ],
+                    'data': {
+                        'id': 1,
+                        'sub': [
+                            {'data': {'id': 2}},
+                            {'data': {'id': 3,
+                                      'vals': ['d', {'e': 'f'}]}}
+                        ]
+                    },
                     'links': []
                 },
                 {
-                    'data': {'id': 3},
+                    'data': {
+                        'id': 4,
+                        'sub': {'data': {'id': 5}}
+                    },
                     'links': []
                 }
             ],
             'pagination': {}
         }
         self.assertListEqual(walk_data(d),
-                             [{'id': 0}, {'id': 1}, {'id': 2}, {'id': 3}])
+                             [
+                                 {'id': 0,
+                                  'vals': [
+                                      'a',
+                                      {'b': 'c'}
+                                  ]
+                                 },
+                                 {'id': 1,
+                                  'sub': [
+                                      {'id': 2},
+                                      {'id': 3,
+                                       'vals': [
+                                           'd',
+                                           {'e': 'f'}
+                                        ]
+                                      }
+                                  ]
+                                 },
+                                 {'id': 4,
+                                  'sub': {'id': 5}
+                                 }
+                             ])
 
 
 class TestExport(unittest.TestCase):

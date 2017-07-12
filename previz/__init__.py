@@ -211,14 +211,24 @@ def flat_list(iterable):
 def ensure_list(obj):
     return obj if isinstance(obj, list) else [obj]
 
+def is_data_node(obj):
+    return isinstance(obj, dict) and 'data' in obj
+
 def walk_data(obj):
     def iter(obj):
-        if isinstance(obj, dict) and 'data' in obj:
-            for obj in ensure_list(obj['data']):
-                for i in iter(obj):
-                    yield i
-        else:
-            yield obj
+        if is_data_node(obj):
+            return iter(obj['data'])
+
+        if isinstance(obj, list):
+            return [iter(o) for o in obj]
+
+        if isinstance(obj, dict):
+            ret = {}
+            for k, v in obj.items():
+                ret[k] = iter(v)
+            return ret
+
+        return obj
 
     return list(iter(obj))
 

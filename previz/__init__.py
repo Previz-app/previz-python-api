@@ -52,9 +52,10 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    def teams(self):
+    def teams(self, include = ['owner,projects']):
         r = self.request('GET',
-                         self.url('teams'))
+                         self.url('teams'),
+                         params=to_params({'include': include}))
         r.raise_for_status()
         return walk_data(r.json())
 

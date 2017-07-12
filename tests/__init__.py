@@ -124,10 +124,29 @@ class TestUtils(unittest.TestCase):
                                  }
                              ])
 
-    def test_list2param(self):
-        self.assertEqual(list2param('key', []), {})
-        self.assertEqual(list2param('key', ['a', 'b']), {'key': 'a,b'})
-        self.assertEqual(list2param('key', [0, 1]), {'key': '0,1'})
+    def test_to_param(self):
+        self.assertEqual(to_param('key', 0), {'key': 0})
+        self.assertEqual(to_param('key', 'a'), {'key': 'a'})
+        self.assertEqual(to_param('key', []), {})
+        self.assertEqual(to_param('key', ['a', 'b']), {'key': 'a,b'})
+        self.assertEqual(to_param('key', [0, 1]), {'key': '0,1'})
+
+    def test_to_params(self):
+        self.assertEqual(
+            to_params({
+                'a': 0,
+                'b': 'a',
+                'c': [],
+                'd': ['a', 'b'],
+                'e': 'a,b'
+            }),
+            {
+                'a': 0,
+                'b': 'a',
+                'd': 'a,b',
+                'e': 'a,b'
+            }
+        )
 
 class TestExport(unittest.TestCase):
     def setUp(self):

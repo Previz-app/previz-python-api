@@ -232,11 +232,20 @@ def walk_data(obj):
 
     return list(iter(obj))
 
-def list2param(name, iterable):
+def to_param(name, v):
+    if not isinstance(v, list):
+        return {name: v}
+
     ret = {}
-    v = ','.join([str(i) for i in iterable])
+    v = ','.join([str(i) for i in v])
     if len(v) > 0:
         ret[name] = v
+    return ret
+
+def to_params(params):
+    ret = {}
+    for k, v in params.items():
+        ret.update(to_param(k, v))
     return ret
 
 #############################################################################

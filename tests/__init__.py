@@ -43,6 +43,7 @@ class TestPrevizProject(unittest.TestCase):
     def test_common_headers(self):
         self.assertEqual(self.p.common_headers,
                          {
+                             'Accept': 'application/vnd.previz.v2+json',
                              'Authorization': 'Bearer aaa'
                          })
 

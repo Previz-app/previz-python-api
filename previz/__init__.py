@@ -176,7 +176,10 @@ class PrevizProject(object):
 
     @property
     def common_headers(self):
-        return {'Authorization': 'Bearer {0}'.format(self.token)}
+        return {
+            'Accept': 'application/vnd.previz.v2+json',
+            'Authorization': 'Bearer {0}'.format(self.token)
+        }
 
 
 class UuidBuilder(object):

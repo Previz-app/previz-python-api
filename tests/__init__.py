@@ -71,6 +71,30 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(b('SomeString'), b('SomeString').upper())
         self.assertNotEqual(b(), b())
 
+    def test_walk_data(self):
+        d = {
+            'data': [
+                {
+                    'data': {'id': 0},
+                    'links': []
+                },
+                {
+                    'data': [
+                        {'data': {'id': 1}},
+                        {'data': {'id': 2}}
+                    ],
+                    'links': []
+                },
+                {
+                    'data': {'id': 3},
+                    'links': []
+                }
+            ],
+            'pagination': {}
+        }
+        self.assertListEqual(walk_data(d),
+                             [{'id': 0}, {'id': 1}, {'id': 2}, {'id': 3}])
+
 
 class TestExport(unittest.TestCase):
     def setUp(self):

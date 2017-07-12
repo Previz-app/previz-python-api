@@ -6,7 +6,6 @@ import uuid
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 
-
 class PrevizProject(object):
     endpoints_masks = {
         'teams':       '{root}/teams',
@@ -209,6 +208,19 @@ def flat_list(iterable):
 
     return list(flatten(iterable))
 
+def ensure_list(obj):
+    return obj if isinstance(obj, list) else [obj]
+
+def walk_data(obj):
+    def iter(obj):
+        if isinstance(obj, dict) and 'data' in obj:
+            for obj in ensure_list(obj['data']):
+                for i in iter(obj):
+                    yield i
+        else:
+            yield obj
+
+    return list(iter(obj))
 
 #############################################################################
 

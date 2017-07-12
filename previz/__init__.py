@@ -56,7 +56,7 @@ class PrevizProject(object):
         r = self.request('GET',
                          self.url('teams'))
         r.raise_for_status()
-        return r.json()
+        return walk_data(r.json())
 
     def team(self):
         r = self.request('GET',

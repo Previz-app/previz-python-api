@@ -232,7 +232,7 @@ def walk_data(obj):
 
         return obj
 
-    return list(iter(obj))
+    return iter(obj)
 
 def to_param(name, v):
     if not isinstance(v, list):

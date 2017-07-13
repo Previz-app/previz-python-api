@@ -73,6 +73,11 @@ class TestUtils(unittest.TestCase):
 
     def test_walk_data(self):
         d = {
+            'data': {'id': 1}
+        }
+        self.assertEqual(walk_data(d), {'id': 1})
+
+        d = {
             'data': [
                 {
                     'data': {'id': 0,

@@ -72,13 +72,14 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    def new_project(self, project_name):
-        data = {'title': project_name}
+    def new_project(self, project_name, team_uuid):
+        data = {'title': project_name,
+                'team': team_uuid}
         r = self.request('POST',
                          self.url('projects'),
                          data=data)
         r.raise_for_status()
-        return r.json()
+        return walk_data(r.json())
 
     def new_scene(self, scene_name):
         data = {'name': scene_name}

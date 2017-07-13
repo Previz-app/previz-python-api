@@ -6,6 +6,16 @@ import uuid
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 
+def extract_apiv2_data(func):
+    def wrapper(*args, **kwargs):
+        return walk_data(func(*args, **kwargs))
+    return wrapper
+
+def single_element(func):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)[0]
+    return wrapper
+
 class PrevizProject(object):
     endpoints_masks = {
         'teams':       '{root}/teams',
@@ -52,19 +62,22 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    @extract_apiv2_data
     def teams(self, include = ['owner,projects']):
         r = self.request('GET',
                          self.url('teams'),
                          params=to_params({'include': include}))
         r.raise_for_status()
-        return walk_data(r.json())
+        return r.json()
 
+    @single_element
+    @extract_apiv2_data
     def team(self, team_id, include=['projects']):
         r = self.request('GET',
                          self.url('team', team_id=team_id),
                          params=to_params({'include': include}))
         r.raise_for_status()
-        return walk_data(r.json())[0]
+        return r.json()
 
     def projects(self):
         r = self.request('GET',
@@ -72,6 +85,7 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    @extract_apiv2_data
     def new_project(self, project_name, team_uuid):
         data = {'title': project_name,
                 'team': team_uuid}
@@ -79,7 +93,7 @@ class PrevizProject(object):
                          self.url('projects'),
                          data=data)
         r.raise_for_status()
-        return walk_data(r.json())
+        return r.json()
 
     def new_scene(self, scene_name):
         data = {'name': scene_name}

@@ -22,7 +22,7 @@ class PrevizProject(object):
         'team':        '{root}/teams/{team_id}',
         'switch_team': '{root}/teams/{team_id}/switch',
         'projects':    '{root}/projects',
-        'project':     '{root}/projects/{project_id:d}',
+        'project':     '{root}/projects/{project_id:s}',
         'scenes' :     '{root}/projects/{project_id:d}/scenes',
         'scene':       '{root}/projects/{project_id:d}/scenes/{scene_id:d}',
         'assets':      '{root}/projects/{project_id:d}/assets',
@@ -103,9 +103,12 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    def project(self):
+    @single_element
+    @extract_apiv2_data
+    def project(self, include=['assets', 'scenes', 'team']):
         r = self.request('GET',
-                         self.url('project'))
+                         self.url('project'),
+                         params=to_params({'include': include}))
         r.raise_for_status()
         return r.json()
 

@@ -138,13 +138,6 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    def set_state(self, state):
-        data = {'state': state}
-        r = self.request('PUT',
-                         self.url('state'),
-                         data=data)
-        r.raise_for_status()
-
     def url(self, mask_name, **url_elems_override):
         url_elems = self.url_elems.copy()
         url_elems.update(url_elems_override)
@@ -172,12 +165,6 @@ class PrevizProject(object):
                         team['projects'].append(self.project())
 
         return teams
-
-    def switch_team(self, team_id):
-        r = self.request('POST',
-                         self.url('switch_team', team_id=team_id))
-        r.raise_for_status()
-        return r.json()
 
     # HACK changing self.project_id here is a terrible hack
     @contextmanager

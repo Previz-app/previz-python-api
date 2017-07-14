@@ -154,19 +154,9 @@ class PrevizProject(object):
         headers = {'Content-Type': data.content_type}
         return data, headers
 
+    @extract_apiv2_data
     def get_all(self):
-        # Just one team until the team API becomes fully REST
-        teams = self.teams()
-
-        for team in teams:
-            team['projects'] = []
-            if team['active_team']:
-                with self.restore_project_id():
-                    for project in self.projects():
-                        self.project_id = project['id']
-                        team['projects'].append(self.project())
-
-        return teams
+        return self.teams(['projects.scenes'])
 
     # HACK changing self.project_id here is a terrible hack
     @contextmanager

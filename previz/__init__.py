@@ -28,11 +28,11 @@ class PrevizProject(object):
         'switch_team': '{root}/teams/{team_id}/switch',
         'projects':    '{root}/projects',
         'project':     '{root}/projects/{project_id:s}',
-        'scenes' :     '{root}/projects/{project_id:d}/scenes',
-        'scene':       '{root}/projects/{project_id:d}/scenes/{scene_id:d}',
-        'assets':      '{root}/projects/{project_id:d}/assets',
-        'asset':       '{root}/projects/{project_id:d}/assets/{asset_id:d}',
-        'state':       '{root}/projects/{project_id:d}/state'
+        'scenes' :     '{root}/projects/{project_id:s}/scenes',
+        'scene':       '{root}/projects/{project_id:s}/scenes/{scene_id:s}',
+        'assets':      '{root}/projects/{project_id:s}/assets',
+        'asset':       '{root}/projects/{project_id:s}/assets/{asset_id:s}',
+        'state':       '{root}/projects/{project_id:s}/state'
     }
 
     def __init__(self, root, token, project_id = None):

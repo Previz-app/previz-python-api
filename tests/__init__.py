@@ -10,41 +10,42 @@ from previz import *
 class TestPrevizProject(unittest.TestCase):
     def setUp(self):
         self.p = PrevizProject('https://example.com/api',
-                               'aaa',
-                               1)
+                               'TOKEN',
+                               '94071d22-3fd6-47bc-9e5b-b3b9f234c3f5')
     
     def test_url(self):
         self.assertEqual(self.p.url('project',
                                     root='http://previz.app/api',
-                                    project_id=2),
-                         'http://previz.app/api/projects/2')
+                                    project_id='d899cd46-a94d-4b51-b9ce-eb6569df9c8b'),
+                         'http://previz.app/api/projects/d899cd46-a94d-4b51-b9ce-eb6569df9c8b')
         
         self.assertEqual(self.p.url('projects'),
                          'https://example.com/api/projects')
         self.assertEqual(self.p.url('project'),
-                         'https://example.com/api/projects/1')
-        self.assertEqual(self.p.url('scene'),
-                         'https://example.com/api/projects/1/scene')
+                         'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5')
+        self.assertEqual(self.p.url('scene',
+                                    scene_id='a71fc256-68a6-11e7-8716-3b6dc9964f94'),
+                         'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5/scenes/a71fc256-68a6-11e7-8716-3b6dc9964f94')
         self.assertEqual(self.p.url('assets'),
-                         'https://example.com/api/projects/1/assets')
+                         'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5/assets')
         self.assertEqual(self.p.url('asset',
-                                    asset_id=3),
-                         'https://example.com/api/projects/1/assets/3')
+                                    asset_id='ee35122e-65ba-4c56-8280-39653a32bf09'),
+                         'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5/assets/ee35122e-65ba-4c56-8280-39653a32bf09')
         self.assertEqual(self.p.url('state'),
-                         'https://example.com/api/projects/1/state')
+                         'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5/state')
 
     def test_url_elems(self):
         self.assertEqual(self.p.url_elems,
                          {
                              'root': 'https://example.com/api',
-                             'project_id': 1
+                             'project_id': '94071d22-3fd6-47bc-9e5b-b3b9f234c3f5'
                          })
 
     def test_common_headers(self):
         self.assertEqual(self.p.common_headers,
                          {
                              'Accept': 'application/vnd.previz.v2+json',
-                             'Authorization': 'Bearer aaa'
+                             'Authorization': 'Bearer TOKEN'
                          })
 
 

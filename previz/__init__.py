@@ -6,6 +6,11 @@ import uuid
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 
+def not_implented_in_v2(func):
+    def wrapper(*args, **kwargs):
+        raise NotImplementedError('{} is not yet implemented in the Previz API v2'.format(func.__qualname__))
+    return wrapper
+
 def extract_apiv2_data(func):
     def wrapper(*args, **kwargs):
         return walk_data(func(*args, **kwargs))
@@ -84,6 +89,7 @@ class PrevizProject(object):
                          self.url('project'))
         r.raise_for_status()
 
+    @not_implented_in_v2
     def new_scene(self, scene_name):
         data = {'name': scene_name}
         r = self.request('POST',
@@ -92,6 +98,7 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    @not_implented_in_v2
     def update_scene(self, scene_id, filename, fp, progress_callback = None):
         method, data = self.method('PATCH')
         data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)
@@ -102,17 +109,20 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    @not_implented_in_v2
     def assets(self):
         r = self.request('GET',
                          self.url('assets'))
         r.raise_for_status()
         return r.json()
 
+    @not_implented_in_v2
     def delete_asset(self, asset_id):
         r = self.request('DELETE',
                          self.url('asset', asset_id=asset_id))
         r.raise_for_status()
 
+    @not_implented_in_v2
     def upload_asset(self, filename, fp, progress_callback = None):
         method, data = self.method('POST')
         data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)

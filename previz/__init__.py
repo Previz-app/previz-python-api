@@ -52,16 +52,6 @@ class PrevizProject(object):
                                 verify=False, # TODO: how to make it work on Mac / Windows ?
                                 **kwargs)
 
-    def update_scene(self, scene_id, filename, fp, progress_callback = None):
-        method, data = self.method('PATCH')
-        data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)
-        r = self.request(method,
-                         self.url('scene', scene_id=scene_id),
-                         data=data,
-                         headers=headers)
-        r.raise_for_status()
-        return r.json()
-
     @extract_apiv2_data
     def teams(self, include = ['owner,projects']):
         r = self.request('GET',
@@ -95,14 +85,6 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    def new_scene(self, scene_name):
-        data = {'name': scene_name}
-        r = self.request('POST',
-                         self.url('scenes'),
-                         data=data)
-        r.raise_for_status()
-        return r.json()
-
     @single_element
     @extract_apiv2_data
     def project(self, include=['assets', 'scenes', 'team']):
@@ -116,6 +98,24 @@ class PrevizProject(object):
         r = self.request('DELETE',
                          self.url('project'))
         r.raise_for_status()
+
+    def new_scene(self, scene_name):
+        data = {'name': scene_name}
+        r = self.request('POST',
+                         self.url('scenes'),
+                         data=data)
+        r.raise_for_status()
+        return r.json()
+
+    def update_scene(self, scene_id, filename, fp, progress_callback = None):
+        method, data = self.method('PATCH')
+        data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)
+        r = self.request(method,
+                         self.url('scene', scene_id=scene_id),
+                         data=data,
+                         headers=headers)
+        r.raise_for_status()
+        return r.json()
 
     def assets(self):
         r = self.request('GET',

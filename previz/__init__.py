@@ -69,9 +69,11 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    def projects(self):
+    @extract_apiv2_data
+    def projects(self, include=['scenes', 'team']): # XXX 'assets' not implemented yet
         r = self.request('GET',
-                         self.url('projects'))
+                         self.url('projects'),
+                         params=to_params({'include': include}))
         r.raise_for_status()
         return r.json()
 

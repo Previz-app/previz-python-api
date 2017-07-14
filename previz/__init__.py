@@ -35,23 +35,6 @@ class PrevizProject(object):
         self.token = token
         self.project_id = project_id
 
-    def method(self, method):
-        data = {}
-        if method in ['PATCH', 'PUT']:
-            data['_method'] = method.lower()
-            method = 'POST'
-        return method, data
-
-    def request(self, *args, **kwargs):
-        headers = {}
-        headers.update(self.common_headers)
-        headers.update(kwargs.get('headers', {}))
-        kwargs['headers'] = headers
-
-        return requests.request(*args,
-                                verify=False, # TODO: how to make it work on Mac / Windows ?
-                                **kwargs)
-
     @extract_apiv2_data
     def teams(self, include = ['owner,projects']):
         r = self.request('GET',
@@ -140,6 +123,10 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    @extract_apiv2_data
+    def get_all(self):
+        return self.teams(['projects.scenes'])
+
     def url(self, mask_name, **url_elems_override):
         url_elems = self.url_elems.copy()
         url_elems.update(url_elems_override)
@@ -153,10 +140,6 @@ class PrevizProject(object):
         data = MultipartEncoderMonitor(data, progress_callback)
         headers = {'Content-Type': data.content_type}
         return data, headers
-
-    @extract_apiv2_data
-    def get_all(self):
-        return self.teams(['projects.scenes'])
 
     # HACK changing self.project_id here is a terrible hack
     @contextmanager
@@ -178,6 +161,23 @@ class PrevizProject(object):
             'Accept': 'application/vnd.previz.v2+json',
             'Authorization': 'Bearer {0}'.format(self.token)
         }
+
+    def method(self, method):
+        data = {}
+        if method in ['PATCH', 'PUT']:
+            data['_method'] = method.lower()
+            method = 'POST'
+        return method, data
+
+    def request(self, *args, **kwargs):
+        headers = {}
+        headers.update(self.common_headers)
+        headers.update(kwargs.get('headers', {}))
+        kwargs['headers'] = headers
+
+        return requests.request(*args,
+                                verify=False, # TODO: how to make it work on Mac / Windows ?
+                                **kwargs)
 
 
 class UuidBuilder(object):

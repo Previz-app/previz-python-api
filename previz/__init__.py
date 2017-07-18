@@ -159,13 +159,6 @@ class PrevizProject(object):
         headers = {'Content-Type': data.content_type}
         return data, headers
 
-    # HACK changing self.project_id here is a terrible hack
-    @contextmanager
-    def restore_project_id(self):
-        old_project_id = self.project_id
-        yield
-        self.project_id = old_project_id
-
     @property
     def url_elems(self):
         return {

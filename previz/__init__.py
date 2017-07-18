@@ -29,7 +29,7 @@ class PrevizProject(object):
         'projects':    '{root}/projects',
         'project':     '{root}/projects/{project_id:s}',
         'scenes' :     '{root}/projects/{project_id:s}/scenes',
-        'scene':       '{root}/projects/{project_id:s}/scenes/{scene_id:s}',
+        'scene':       '{root}/scenes/{scene_id:s}',
         'assets':      '{root}/projects/{project_id:s}/assets',
         'asset':       '{root}/projects/{project_id:s}/assets/{asset_id:s}',
         'state':       '{root}/projects/{project_id:s}/state'
@@ -88,6 +88,15 @@ class PrevizProject(object):
         r = self.request('DELETE',
                          self.url('project'))
         r.raise_for_status()
+
+    @single_element
+    @extract_apiv2_data
+    def scene(self, scene_id, include=['bookmarks', 'project', 'tracks']):
+        r = self.request('GET',
+                         self.url('scene', scene_id=scene_id),
+                         params=to_params({'include': include}))
+        r.raise_for_status()
+        return r.json()
 
     @not_implented_in_v2
     def new_scene(self, scene_name):

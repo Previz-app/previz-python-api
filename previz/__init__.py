@@ -142,7 +142,6 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    @extract_apiv2_data
     def get_all(self):
         return self.teams(['projects.scenes'])
 

@@ -38,23 +38,3 @@ class Decorators(object):
     def tempscene(self):
         '''Returning an existing scene while the API v2 is being worked on'''
         return self.scene('5a56a895-46ef-4f0f-862c-38ce14f6275b')
-
-
-def tempproject(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        api_root = os.environ[PREVIZ_API_ROOT_ENVVAR]
-        api_token = os.environ[PREVIZ_API_TOKEN_ENVVAR]
-        project_name = 'cf-' + func.__qualname__
-
-        p = PrevizProject(api_root, api_token)
-        #p.project_id = p.new_project(project_name)['id']
-        p.project_id = 'a5ff9cef-4904-4dc3-8a3c-821a219c891e' # p.project_id
-
-        func(project_id=p.project_id, *args, **kwargs)
-
-        #p.delete_project()
-    return wrapper
-
-def tempscene(func):
-    pass

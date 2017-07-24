@@ -68,7 +68,7 @@ class PrevizProject(object):
     @extract_apiv2_data
     def new_project(self, project_name, team_uuid):
         data = {'title': project_name,
-                'team': team_uuid}
+                'team_id': team_uuid}
         r = self.request('POST',
                          self.url('projects'),
                          data=data)

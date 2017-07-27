@@ -85,6 +85,7 @@ class PrevizProject(object):
         return r.json()
 
     @extract_apiv2_data
+    @accumulate_pagination_next
     def projects(self, include=['scenes', 'team']): # XXX 'assets' not implemented yet
         r = self.request('GET',
                          self.url('projects'),

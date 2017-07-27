@@ -21,6 +21,32 @@ def single_element(func):
         return func(*args, **kwargs)[0]
     return wrapper
 
+def accumulate_pagination_next(func):
+    data = []
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        rep = func(*args, **kwargs)
+        data.extend(rep['data'])
+        url = pagination_next_url(rep)
+        while url:
+            rep = self.request('GET', url)
+            rep.raise_for_status()
+            rep = rep.json()
+            data.extend(rep['data'])
+            url = pagination_next_url(rep)
+
+        ret = rep
+        ret['data'] = data
+        return ret
+    return wrapper
+
+def pagination_next_url(rep):
+    if 'pagination' not in rep:
+        return None
+    for link in rep['pagination']['links']:
+        if link['rel'] == 'pagination.next':
+            return link['url']
+
 class PrevizProject(object):
     endpoints_masks = {
         'teams':       '{root}/teams',

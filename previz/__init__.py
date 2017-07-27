@@ -147,6 +147,7 @@ class PrevizProject(object):
         return r.json()
 
     @not_implented_in_v2
+    @accumulate_pagination_next
     def assets(self):
         r = self.request('GET',
                          self.url('assets'))

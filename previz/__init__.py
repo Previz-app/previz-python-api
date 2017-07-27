@@ -67,6 +67,7 @@ class PrevizProject(object):
         self.project_id = project_id
 
     @extract_apiv2_data
+    @accumulate_pagination_next
     def teams(self, include = ['owner,projects']):
         r = self.request('GET',
                          self.url('teams'),

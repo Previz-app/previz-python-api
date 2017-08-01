@@ -154,6 +154,47 @@ class TestUtils(unittest.TestCase):
             }
         )
 
+    def test_get_updated_version(self):
+        d = {
+            "blender": {
+                "current_version": "0.0.8",
+                "description": "Create Previz projects and export meshes, UV sets and images directly from Blender",
+                "downloadUrl": "http://previz.app/downloads/plugins/previz-blender-current_version.zip",
+                "handle": "blender",
+                "icon": "http://previz.app/img/third-party-logos/addons_c4d.png",
+                "id": "c25da42b-99b4-4b87-a702-50ca6f1c4ef7",
+                "title": "Blender",
+                "versions": {
+                    "0.0.8": {
+                        "downloadUrl": "http://previz.app/downloads/plugins/previz-blender-0.0.8.zip",
+                        "id": "37cb1fa5-f5e3-43cd-8e1c-5bae36e42c43",
+                        "released_at": "2017-07-20T09:00:00+00:00"
+                    }
+                }
+            },
+            "cinema4d": {
+                "current_version": "0.0.12",
+                "description": "Create Previz projects and export meshes, UV sets and images directly from Cinema4D.",
+                "downloadUrl": "http://previz.app/downloads/plugins/previz-cinema4d-current_version.zip",
+                "handle": "cinema4d",
+                "icon": "http://previz.app/img/third-party-logos/addons_blender.png",
+                "id": "af0d0f86-dd06-4656-828b-ec07b8b89fd6",
+                "title": "Cinema4D",
+                "versions": {
+                    "0.0.12": {
+                        "downloadUrl": "http://previz.app/downloads/plugins/previz-cinema4d-0.0.12.zip",
+                        "id": "7df96df3-3f35-4e6c-9d40-7a42e68ca60c",
+                        "released_at": "2017-07-20T09:00:00+00:00"
+                    }
+                }
+            }
+        }
+        self.assertIsNone(get_updated_version(d, 'blender', '0.0.8'))
+        self.assertEqual(
+            get_updated_version(d, 'cinema4d', '0.0.11')['id'],
+            '7df96df3-3f35-4e6c-9d40-7a42e68ca60c'
+        )
+
 class TestExport(unittest.TestCase):
     def setUp(self):
         self.mesh = Mesh('MyMesh',

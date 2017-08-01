@@ -26,7 +26,7 @@ setup(
 
     keywords='previz development 3d scene exporter',
     packages=find_packages(exclude=['tests']),
-    install_requires=['requests', 'requests_toolbelt'],
+    install_requires=['requests', 'requests_toolbelt', 'semantic_version'],
     extras_require={},
     package_data={},
     data_files=[]

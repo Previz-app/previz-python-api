@@ -5,6 +5,7 @@ import uuid
 
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
+import semantic_version
 
 def not_implented_in_v2(func):
     def wrapper(*args, **kwargs):
@@ -46,6 +47,13 @@ def pagination_next_url(rep):
     for link in rep['pagination']['links']:
         if link['rel'] == 'pagination.next':
             return link['url']
+
+def get_updated_version(api_data, handle, version):
+    d = api_data[handle]
+    current_version = d['current_version']
+    if semantic_version.Version(version) >= semantic_version.Version(current_version):
+        return
+    return d['versions'][current_version]
 
 class PrevizProject(object):
     endpoints_masks = {

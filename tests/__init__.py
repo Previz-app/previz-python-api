@@ -197,10 +197,7 @@ class TestUtils(unittest.TestCase):
             }
         }
         self.assertIsNone(get_updated_version(d, 'blender', '0.0.8'))
-        self.assertEqual(
-            get_updated_version(d, 'cinema4d', '0.0.11')['id'],
-            '7df96df3-3f35-4e6c-9d40-7a42e68ca60c'
-        )
+        self.assertEqual(get_updated_version(d, 'cinema4d', '0.0.11')['version'], '0.0.12')
 
 class TestExport(unittest.TestCase):
     def setUp(self):

@@ -53,7 +53,9 @@ def get_updated_version(api_data, handle, version):
     current_version = d['current_version']
     if semantic_version.Version(version) >= semantic_version.Version(current_version):
         return
-    return d['versions'][current_version]
+    ret = d['versions'][current_version]
+    ret['version'] = current_version
+    return ret
 
 class PrevizProject(object):
     endpoints_masks = {

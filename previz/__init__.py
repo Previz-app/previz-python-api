@@ -88,6 +88,9 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    def updated_plugin(self, handle, version):
+        return get_updated_version(self.plugins(), handle, version)
+
     @extract_apiv2_data
     @accumulate_pagination_next
     def teams(self, include = ['owner,projects']):

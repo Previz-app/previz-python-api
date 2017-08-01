@@ -25,7 +25,7 @@ class TestPrevizProject(unittest.TestCase):
                          'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5')
         self.assertEqual(self.p.url('scene',
                                     scene_id='a71fc256-68a6-11e7-8716-3b6dc9964f94'),
-                         'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5/scenes/a71fc256-68a6-11e7-8716-3b6dc9964f94')
+                         'https://example.com/api/scenes/a71fc256-68a6-11e7-8716-3b6dc9964f94')
         self.assertEqual(self.p.url('assets'),
                          'https://example.com/api/projects/94071d22-3fd6-47bc-9e5b-b3b9f234c3f5/assets')
         self.assertEqual(self.p.url('asset',

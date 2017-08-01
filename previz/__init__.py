@@ -66,7 +66,8 @@ class PrevizProject(object):
         'scene':       '{root}/scenes/{scene_id:s}',
         'assets':      '{root}/projects/{project_id:s}/assets',
         'asset':       '{root}/projects/{project_id:s}/assets/{asset_id:s}',
-        'state':       '{root}/projects/{project_id:s}/state'
+        'state':       '{root}/projects/{project_id:s}/state',
+        'plugins':     '{root_v1}/plugins'
     }
 
     def __init__(self, root, token, project_id = None):
@@ -80,6 +81,12 @@ class PrevizProject(object):
         from os.path import dirname, join # for python 2.6 and python 3
         base_root = join(self.root, '') # Ensure trailing slash
         return join(dirname(dirname(base_root)), 'api-v1')
+
+    def plugins(self):
+        r = self.request('GET',
+                         self.url('plugins'))
+        r.raise_for_status()
+        return r.json()
 
     @extract_apiv2_data
     @accumulate_pagination_next
@@ -207,6 +214,7 @@ class PrevizProject(object):
     def url_elems(self):
         return {
             'root': self.root,
+            'root_v1': self.root_v1,
             'project_id': self.project_id,
         }
 

@@ -38,6 +38,7 @@ class TestPrevizProject(unittest.TestCase):
         self.assertEqual(self.p.url_elems,
                          {
                              'root': 'https://example.com/api',
+                             'root_v1': 'https://example.com/api-v1',
                              'project_id': '94071d22-3fd6-47bc-9e5b-b3b9f234c3f5'
                          })
 

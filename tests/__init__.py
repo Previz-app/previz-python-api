@@ -48,6 +48,12 @@ class TestPrevizProject(unittest.TestCase):
                              'Authorization': 'Bearer TOKEN'
                          })
 
+    def test_root_v1(self):
+        self.p.root = 'https://example.com/api'
+        self.assertEqual(self.p.root_v1, 'https://example.com/api-v1')
+        self.p.root = 'https://example.com/api/'
+        self.assertEqual(self.p.root_v1, 'https://example.com/api-v1')
+
 
 class TestUtils(unittest.TestCase):
     def test_flat_list(self):

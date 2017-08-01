@@ -74,6 +74,13 @@ class PrevizProject(object):
         self.token = token
         self.project_id = project_id
 
+    @property
+    def root_v1(self):
+        '''This a temporary method while /api/plugins is being implemented in v2'''
+        from os.path import dirname, join # for python 2.6 and python 3
+        base_root = join(self.root, '') # Ensure trailing slash
+        return join(dirname(dirname(base_root)), 'api-v1')
+
     @extract_apiv2_data
     @accumulate_pagination_next
     def teams(self, include = ['owner,projects']):

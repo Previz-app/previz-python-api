@@ -7,8 +7,8 @@ setup(
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.0.7',
-    description='Previz API',
-    url='https://app.previz.co',
+    description='Previz REST API python wrapper',
+    url='https://github.com/Previz-app/previz-python-api',
     author='Previz',
     author_email='info@previz.co',
     license='MIT',
@@ -19,6 +19,7 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Multimedia :: Graphics :: 3D Modeling',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

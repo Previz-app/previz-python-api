@@ -1,2 +1,5 @@
 bumpversion
+requests
+requests_toolbelt
+semantic_version
 tox

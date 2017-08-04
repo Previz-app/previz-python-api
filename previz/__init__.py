@@ -1,4 +1,5 @@
 import collections
+import copy
 from contextlib import contextmanager
 import json
 import uuid
@@ -22,6 +23,21 @@ def single_element(func):
         return func(*args, **kwargs)[0]
     return wrapper
 
+def find_by_key(iterable, key, value):
+    for i in iterable:
+        if i[key] == value:
+            return i
+
+def add_plugins_download_url(func):
+    def wrapper(*args, **kwargs):
+        resp = func(*args, **kwargs)
+        for plugin in resp['data']:
+            data = plugin['data']
+            link = find_by_key(plugin['links'], 'rel', 'plugin.download')
+            data['downloadUrl'] = link['url']
+        return resp
+    return wrapper
+
 def accumulate_pagination_next(func):
     data = []
     def wrapper(*args, **kwargs):
@@ -38,8 +54,18 @@ def accumulate_pagination_next(func):
 
         ret = rep
         ret['data'] = data
+
         return ret
     return wrapper
+
+def iter2dict(key):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            ret = func(*args, **kwargs)
+            return dict((x[key], x) for x in ret)
+        return wrapper
+    return decorator
+
 
 def pagination_next_url(rep):
     if 'pagination' not in rep:
@@ -50,12 +76,11 @@ def pagination_next_url(rep):
 
 def get_updated_version(api_data, handle, version):
     d = api_data[handle]
-    current_version = d['current_version']
-    if semantic_version.Version(version) >= semantic_version.Version(current_version):
-        return
-    ret = d['versions'][current_version]
-    ret['version'] = current_version
-    return ret
+    if semantic_version.Version(d['current_version']) > semantic_version.Version(version):
+        d = copy.deepcopy(d)
+        d['version'] = d['current_version']
+        del d['current_version']
+        return d
 
 class PrevizProject(object):
     endpoints_masks = {
@@ -69,7 +94,7 @@ class PrevizProject(object):
         'assets':      '{root}/projects/{project_id:s}/assets',
         'asset':       '{root}/projects/{project_id:s}/assets/{asset_id:s}',
         'state':       '{root}/projects/{project_id:s}/state',
-        'plugins':     '{root_v1}/plugins'
+        'plugins':     '{root}/plugins'
     }
 
     def __init__(self, root, token, project_id = None):
@@ -84,6 +109,10 @@ class PrevizProject(object):
         base_root = join(self.root, '') # Ensure trailing slash
         return join(dirname(dirname(base_root)), 'api-v1')
 
+    @iter2dict('handle')
+    @extract_apiv2_data
+    @add_plugins_download_url
+    @accumulate_pagination_next
     def plugins(self):
         r = self.request('GET',
                          self.url('plugins'))

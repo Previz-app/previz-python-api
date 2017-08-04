@@ -30,4 +30,4 @@ p = previz.PrevizProject(API_ROOT, API_TOKEN)
 #p.assets()
 
 #pprint(p.plugins())
-pprint(p.updated_plugin('blender', '0.0.8'))
+pprint(p.updated_plugin('blender', '0.0.7'))

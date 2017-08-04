@@ -102,13 +102,6 @@ class PrevizProject(object):
         self.token = token
         self.project_id = project_id
 
-    @property
-    def root_v1(self):
-        '''This a temporary method while /api/plugins is being implemented in v2'''
-        from os.path import dirname, join # for python 2.6 and python 3
-        base_root = join(self.root, '') # Ensure trailing slash
-        return join(dirname(dirname(base_root)), 'api-v1')
-
     @iter2dict('handle')
     @extract_apiv2_data
     @add_plugins_download_url
@@ -248,7 +241,6 @@ class PrevizProject(object):
     def url_elems(self):
         return {
             'root': self.root,
-            'root_v1': self.root_v1,
             'project_id': self.project_id,
         }
 

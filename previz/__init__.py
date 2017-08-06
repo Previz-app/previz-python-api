@@ -28,6 +28,16 @@ def find_by_key(iterable, key, value):
         if i[key] == value:
             return i
 
+def add_link_to_data(link_name, new_key):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            resp = func(*args, **kwargs)
+            link = find_by_key(resp['links'], 'rel', link_name)
+            resp['data'][new_key] = link['url']
+            return resp
+        return wrapper
+    return decorator
+
 def add_plugins_download_url(func):
     def wrapper(*args, **kwargs):
         resp = func(*args, **kwargs)
@@ -89,7 +99,7 @@ class PrevizProject(object):
         'switch_team': '{root}/teams/{team_id}/switch',
         'projects':    '{root}/projects',
         'project':     '{root}/projects/{project_id:s}',
-        'scenes' :     '{root}/projects/{project_id:s}/scenes',
+        'scenes' :     '{root}/scenes',
         'scene':       '{root}/scenes/{scene_id:s}',
         'assets':      '{root}/projects/{project_id:s}/assets',
         'asset':       '{root}/projects/{project_id:s}/assets/{asset_id:s}',
@@ -175,9 +185,13 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    @not_implented_in_v2
-    def new_scene(self, scene_name):
-        data = {'name': scene_name}
+    @extract_apiv2_data
+    @add_link_to_data('scene.json', 'sceneJson')
+    def new_scene(self, title):
+        data = {
+            'title': title,
+            'project_id': self.project_id
+        }
         r = self.request('POST',
                          self.url('scenes'),
                          data=data)

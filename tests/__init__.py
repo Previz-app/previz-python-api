@@ -38,7 +38,6 @@ class TestPrevizProject(unittest.TestCase):
         self.assertEqual(self.p.url_elems,
                          {
                              'root': 'https://example.com/api',
-                             'root_v1': 'https://example.com/api-v1',
                              'project_id': '94071d22-3fd6-47bc-9e5b-b3b9f234c3f5'
                          })
 
@@ -48,12 +47,6 @@ class TestPrevizProject(unittest.TestCase):
                              'Accept': 'application/vnd.previz.v2+json',
                              'Authorization': 'Bearer TOKEN'
                          })
-
-    def test_root_v1(self):
-        self.p.root = 'https://example.com/api'
-        self.assertEqual(self.p.root_v1, 'https://example.com/api-v1')
-        self.p.root = 'https://example.com/api/'
-        self.assertEqual(self.p.root_v1, 'https://example.com/api-v1')
 
 
 class TestUtils(unittest.TestCase):

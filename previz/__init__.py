@@ -223,17 +223,6 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
-    #@not_implented_in_v2
-    #def update_scene(self, scene_id, filename, fp, progress_callback = None):
-        #method, data = self.method('PATCH')
-        #data, headers = self.build_multipart_encoder(filename, fp, data, progress_callback)
-        #r = self.request(method,
-                         #self.url('scene', scene_id=scene_id),
-                         #data=data,
-                         #headers=headers)
-        #r.raise_for_status()
-        #return r.json()
-
     def update_scene(self, json_url, fp, progress_callback = None):
         headers = {'Content-Type': 'application/json'}
         r = self.request('PUT',

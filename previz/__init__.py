@@ -2,6 +2,7 @@ import collections
 import copy
 from contextlib import contextmanager
 import json
+import os
 import uuid
 
 import requests
@@ -91,6 +92,30 @@ def get_updated_version(api_data, handle, version):
         d['version'] = d['current_version']
         del d['current_version']
         return d
+
+
+class ReaderMonitor(object):
+    def __init__(self, obj, cb = None):
+        self.obj = obj
+        self.read_so_far = 0
+        self.cb = cb
+
+        try:
+            self.size = os.stat(self.obj.fileno()).st_size
+        except OSError:
+            self.size = None
+
+    def __getattr__(self, attr):
+        return getattr(self.obj, attr)
+
+    def read(self, size):
+        ret = self.obj.read(size)
+        read_size = len(ret)
+        self.read_so_far += read_size
+        if self.cb is not None:
+            self.cb(self.obj, read_size, self.read_so_far, self.size)
+        return ret
+
 
 class PrevizProject(object):
     endpoints_masks = {
@@ -209,11 +234,11 @@ class PrevizProject(object):
         #r.raise_for_status()
         #return r.json()
 
-    def update_scene(self, json_url, filename, fp, progress_callback = None):
+    def update_scene(self, json_url, fp, progress_callback = None):
         headers = {'Content-Type': 'application/json'}
         r = self.request('PUT',
                          json_url,
-                         data=fp,
+                         data=ReaderMonitor(fp, progress_callback),
                          headers=headers)
         r.raise_for_status()
 

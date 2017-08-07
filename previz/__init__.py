@@ -29,12 +29,21 @@ def find_by_key(iterable, key, value):
         if i[key] == value:
             return i
 
+def iter_resp(resp):
+    items = resp['data']
+    if type(items) is dict:
+        yield resp
+    else:
+        for i in items:
+            yield i
+
 def add_link_to_data(link_name, new_key):
     def decorator(func):
         def wrapper(*args, **kwargs):
             resp = func(*args, **kwargs)
-            link = find_by_key(resp['links'], 'rel', link_name)
-            resp['data'][new_key] = link['url']
+            for item in iter_resp(resp):
+                link = find_by_key(item['links'], 'rel', link_name)
+                item['data'][new_key] = link['url']
             return resp
         return wrapper
     return decorator
@@ -203,6 +212,7 @@ class PrevizProject(object):
 
     @single_element
     @extract_apiv2_data
+    @add_link_to_data('scene.json', 'jsonUrl')
     def scene(self, scene_id, include=['bookmarks', 'project', 'tracks']):
         r = self.request('GET',
                          self.url('scene', scene_id=scene_id),
@@ -211,7 +221,7 @@ class PrevizProject(object):
         return r.json()
 
     @extract_apiv2_data
-    @add_link_to_data('scene.json', 'sceneJson')
+    @add_link_to_data('scene.json', 'jsonUrl')
     def new_scene(self, title):
         data = {
             'title': title,

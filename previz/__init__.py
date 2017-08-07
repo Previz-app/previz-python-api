@@ -110,7 +110,7 @@ class ReaderMonitor(object):
         self.cb = cb
 
         try:
-            self.size = os.stat(self.obj.fileno()).st_size
+            self.size = os.fstat(self.obj.fileno()).st_size
         except OSError:
             self.size = None
 

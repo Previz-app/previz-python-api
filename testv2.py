@@ -5,7 +5,7 @@ from pprint import pprint
 import previz
 
 API_ROOT = 'http://previz.app/api'
-API_TOKEN = 'zdvBU8BtPL5cubhlshz0qsYYaT7B0hMuebpQoMijNcXrN2qDc29WLTCxO5pL'
+API_TOKEN = 'Ux7lRGCnlGFn91F0yIiTEFhwiVWdb7YD1pFzeb4Ee6UpLL6sDIdjDQOEnpNK'
 
 TEAM_UUIDS = ['94071d22-3fd6-47bc-9e5b-b3b9f234c3f5', '938b52d0-0f4b-4179-afb9-901108456487']
 TEAM_UUID = TEAM_UUIDS[1] # charles-team
@@ -29,12 +29,20 @@ p = previz.PrevizProject(API_ROOT, API_TOKEN, PROJECT_UUID)
 #pprint(p.scene(SCENE_UUID, include=[]))
 #pprint(p.new_scene('cf-pyapi-module'))
 
-def cb(*args, **kwargs):
-    print('cb', args, kwargs)
+#def cb(*args, **kwargs):
+    #print('cb', args, kwargs)
 #pprint(p.update_scene(SCENE_JSON_URL, 'scene.json', open('scene.json'), cb))
 #p.update_scene(SCENE_JSON_URL, open('scene.json'), cb)
 
-#pprint(p.get_all())
+pprint(len(p.get_all()))
+pprint(len(p.get_all()))
+pprint(len(p.get_all()))
+
+#pprint(len(p.teams()))
+#pprint(len(p.teams()))
+#pprint(len(p.teams()))
+#pprint(len(p.teams()))
+
 
 #p.assets()
 

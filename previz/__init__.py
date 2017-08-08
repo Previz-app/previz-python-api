@@ -59,8 +59,8 @@ def add_plugins_download_url(func):
     return wrapper
 
 def accumulate_pagination_next(func):
-    data = []
     def wrapper(*args, **kwargs):
+        data = []
         self = args[0]
         rep = func(*args, **kwargs)
         data.extend(rep['data'])

@@ -224,6 +224,11 @@ class PrevizProject(object):
         r.raise_for_status()
         return r.json()
 
+    def delete_scene(self, scene_id):
+        r = self.request('DELETE',
+                         self.url('scene', scene_id=scene_id))
+        r.raise_for_status()
+
     @extract_apiv2_data
     @add_link_to_data('scene.json', 'jsonUrl')
     def new_scene(self, title):

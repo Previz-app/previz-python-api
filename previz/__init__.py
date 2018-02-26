@@ -9,9 +9,9 @@ import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 import semantic_version
 
-__author__ = 'Previz'
-__contact__ = 'info@previz.co'
-__version__ = '1.0.1'
+#__author__ = 'Previz'
+#__contact__ = 'info@previz.co'
+#__version__ = '1.0.1'
 
 def not_implented_in_v2(func):
     def wrapper(*args, **kwargs):

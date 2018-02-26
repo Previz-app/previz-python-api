@@ -12,13 +12,13 @@ class TestPrevizProject(unittest.TestCase):
         self.p = PrevizProject('https://example.com/api',
                                'TOKEN',
                                '94071d22-3fd6-47bc-9e5b-b3b9f234c3f5')
-    
+
     def test_url(self):
         self.assertEqual(self.p.url('project',
                                     root='http://previz.app/api',
                                     project_id='d899cd46-a94d-4b51-b9ce-eb6569df9c8b'),
                          'http://previz.app/api/projects/d899cd46-a94d-4b51-b9ce-eb6569df9c8b')
-        
+
         self.assertEqual(self.p.url('projects'),
                          'https://example.com/api/projects')
         self.assertEqual(self.p.url('project'),
@@ -192,6 +192,17 @@ class TestUtils(unittest.TestCase):
         self.assertIsNone(get_updated_version(d, 'blender', '0.0.8'))
         self.assertEqual(get_updated_version(d, 'cinema4d', '0.0.11')['version'], '0.0.12')
 
+    def test_normalize_api_root(self):
+        should_be = 'https://example.com/api'
+        token = 'XXX'
+
+        p = PrevizProject('https://example.com/api', token)
+        self.assertEqual(p.root, should_be)
+
+        p = PrevizProject('https://example.com/api/', token)
+        self.assertEqual(p.root, should_be)
+
+
 class TestExport(unittest.TestCase):
     def setUp(self):
         self.mesh = Mesh('MyMesh',
@@ -200,19 +211,19 @@ class TestExport(unittest.TestCase):
                          [[7, [8, 9, 10], [[11, 12, 13], [14, 15, 16]]]],    # faces,        no special meaning
                          [[17, 18], [19, 20]],                               # vertices,     no special meaning
                          [UVSet('uvsA', [21, 22]), UVSet('uvsB', range(23, 25))]) # uvsets,       no special meaning
-        
+
         self.scene = Scene('MyGenerator',
                            '/path/to/my/source/file.json',
                            14423100, # SVG crimson #DC143C
                            [self.mesh])
-        
+
         self.built_metadata = {
             'version': 4.4,
             'type': 'Object',
             'generator': 'MyGenerator',
             'sourceFile': '/path/to/my/source/file.json'
         }
-        
+
         self.built_geometry = {
             'data': {
                 'metadata': {
@@ -227,7 +238,7 @@ class TestExport(unittest.TestCase):
             'uuid': '43A33449-0B05-4A9F-B05A-8B880646F6B4',
             'type': 'Geometry'
         }
-        
+
         self.built_user_data = {
             'previz': {
                 'uvsetNames': ['uvsA', 'uvsB']
@@ -243,7 +254,7 @@ class TestExport(unittest.TestCase):
             'geometry': self.built_geometry['uuid'],
             'userData': self.built_user_data
         }
-        
+
         self.built_scene_root = {
             'type': 'Scene',
             'matrix': [
@@ -268,7 +279,7 @@ class TestExport(unittest.TestCase):
             'children': [self.built_object],
             'background': 14423100
         }
-        
+
         self.built_scene = {
             'animations': [],
             'geometries': [self.built_geometry],
@@ -278,19 +289,19 @@ class TestExport(unittest.TestCase):
             'object': self.built_scene_root,
             'textures': []
         }
-        
+
     def reset_uuid(self, d, new_uuid):
         uuid.UUID(d['uuid']) # Test if uuid is valid
         d['uuid'] = new_uuid
-    
+
     def test_build_metadata(self):
         self.assertEqual(build_metadata(self.scene), self.built_metadata)
-    
-    def test_build_scene_root(self):        
+
+    def test_build_scene_root(self):
         root = build_scene_root(self.scene, [self.built_object])
         self.reset_uuid(root, self.built_scene_root['uuid'])
         self.assertEqual(root, self.built_scene_root)
-    
+
     def test_build_geometry(self):
         g = build_geometry(self.scene, self.mesh)
         self.reset_uuid(g, self.built_geometry['uuid'])
@@ -303,20 +314,20 @@ class TestExport(unittest.TestCase):
         o = build_object(self.mesh, self.built_geometry['uuid'])
         self.reset_uuid(o, self.built_object['uuid'])
         self.assertEqual(o, self.built_object)
-    
+
     def fix_uuids(self, scene_root, geometries):
         self.reset_uuid(scene_root, self.built_scene_root['uuid'])
         self.reset_uuid(scene_root['children'][0], self.built_object['uuid'])
         scene_root['children'][0]['geometry'] = self.built_geometry['uuid']
-        
+
         self.reset_uuid(geometries[0], self.built_geometry['uuid'])
-    
+
     def test_build_objects(self):
         scene_root, geometries = build_objects(self.scene)
         self.fix_uuids(scene_root, geometries)
         self.assertEqual(scene_root, self.built_scene_root)
         self.assertEqual(geometries, [self.built_geometry])
-    
+
     def test_build_three_js_scene(self):
         scene = build_three_js_scene(self.scene)
         self.fix_uuids(scene['object'], scene['geometries'])
@@ -329,5 +340,3 @@ class TestExport(unittest.TestCase):
         self.fix_uuids(scene_from_json['object'],
                        scene_from_json['geometries'])
         self.assertEqual(scene_from_json, self.built_scene)
-        
-        

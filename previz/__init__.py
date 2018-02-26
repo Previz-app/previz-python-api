@@ -3,6 +3,7 @@ import copy
 from contextlib import contextmanager
 import json
 import os
+import re
 import uuid
 
 import requests
@@ -106,6 +107,9 @@ def get_updated_version(api_data, handle, version):
         del d['current_version']
         return d
 
+def normalize_api_root(root):
+    return re.sub(r'/$', '', root)
+
 
 class ReaderMonitor(object):
     def __init__(self, obj, cb = None):
@@ -146,7 +150,7 @@ class PrevizProject(object):
     }
 
     def __init__(self, root, token, project_id = None):
-        self.root = root
+        self.root = normalize_api_root(root)
         self.token = token
         self.project_id = project_id
 

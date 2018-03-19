@@ -2,7 +2,7 @@ try:
     from StringIO import StringIO # python 2
 except ImportError:
     from io import StringIO # python 3
-import json
+import responses
 import unittest
 
 from previz import *
@@ -47,6 +47,33 @@ class TestPrevizProject(unittest.TestCase):
                              'Accept': 'application/vnd.previz.v2+json',
                              'Authorization': 'Bearer TOKEN'
                          })
+
+    def test_custom_headers(self):
+        self.assertEqual(self.p.custom_headers, {})
+
+    def test_set_custom_headers(self):
+        self.p.custom_headers = {'Greeting': 'Hello World'}
+        self.assertEqual(self.p.custom_headers, {'Greeting': 'Hello World'})
+
+    @responses.activate
+    def test_request_headers(self):
+        # Set the custom headers.
+        self.p.custom_headers = {'x-test-header': 'this is a test'}
+
+        # Mock the response.
+        responses.add(responses.GET,
+                      'https://example.com/api/plugins',
+                      json={'data': []},
+                      status=200)
+
+        self.p.plugins()
+
+        # Check the request headers.
+        headers = responses.calls[0].request.headers
+
+        self.assertTrue(('Accept', 'application/vnd.previz.v2+json'), headers.items())
+        self.assertTrue(('Authorization', 'Bearer TOKEN'), headers.items())
+        self.assertTrue(('x-test-header', 'this is a test'), headers.items())
 
 
 class TestUtils(unittest.TestCase):

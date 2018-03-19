@@ -1,7 +1,14 @@
+# @see https://caremad.io/posts/2013/07/setup-vs-requirement/
+--index-url https://pypi.python.org/simple/
+
+# Development requirements
 bumpversion
-requests
-requests_toolbelt
-semantic_version
+coverage
+nose
+responses
 tox
 twine
 wheel
+
+# Application requirements, read from setup.py
+-e .

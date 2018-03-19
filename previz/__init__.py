@@ -1,6 +1,5 @@
 import collections
 import copy
-from contextlib import contextmanager
 import json
 import os
 import re
@@ -153,6 +152,7 @@ class PrevizProject(object):
         self.root = normalize_api_root(root)
         self.token = token
         self.project_id = project_id
+        self._custom_headers = {}
 
     @iter2dict('handle')
     @extract_apiv2_data
@@ -305,10 +305,23 @@ class PrevizProject(object):
 
     @property
     def common_headers(self):
+        """Headers required for each API request.
+
+        The `custom_headers` property should be used to set custom headers.
+        """
         return {
             'Accept': 'application/vnd.previz.v2+json',
             'Authorization': 'Bearer {0}'.format(self.token)
         }
+
+    @property
+    def custom_headers(self):
+        return self._custom_headers
+
+    @custom_headers.setter
+    def custom_headers(self, headers):
+        """A dictionary of custom headers, which will be sent with every request."""
+        self._custom_headers = headers
 
     def method(self, method):
         data = {}
@@ -320,6 +333,7 @@ class PrevizProject(object):
     def request(self, *args, **kwargs):
         headers = {}
         headers.update(self.common_headers)
+        headers.update(self.custom_headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
 
